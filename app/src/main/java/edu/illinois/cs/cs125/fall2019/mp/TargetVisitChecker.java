@@ -1,5 +1,4 @@
 package edu.illinois.cs.cs125.fall2019.mp;
-import static edu.illinois.cs.cs125.fall2019.mp.LatLngUtils.distance;
 /**
  * Holds methods for managing a path of target claims.
  * <p>
@@ -43,23 +42,19 @@ public class TargetVisitChecker {
                                            final int range) {
         // HINT: To find the distance in meters between two locations, use a provided helper function:
         // LatLngUtils.distance(oneLatitude, oneLongitude, otherLatitude, otherLongitude)
-        double dist;
-        int index = 0;
         for (int i = 0; i < latitudes.length; i++) {
-            if (path[i] == -1) {
-                dist = distance(latitudes[i], longitudes[i], currentLatitude, currentLongitude);
-            } else {
-                dist = -1;
+            if (LatLngUtils.distance(latitudes[i], longitudes[i], currentLatitude, currentLongitude) <= range) {
+                for (int j = 0; j < path.length; j++) {
+                    if (path[j] == i) {
+                        break;
+                    } else if (path.length - 1 == j) {
+                        return i;
+                    }
+
+                }
+                }
             }
-            if ((dist <= range) && (dist != -1)) {
-                index = i;
-                break;
-            }
-        }
-        if (index == 0) {
-            index = -1;
-        }
-        return index;
+        return -1;
     }
 
     /**
@@ -89,12 +84,15 @@ public class TargetVisitChecker {
         // HINT: To determine whether two lines cross, use a provided helper function:
         // LineCrossDetector.linesCross(oneStartLat, oneStartLng, oneEndLat, oneEndLng,
         //                              otherStartLat, otherStartLng, otherEndLat, otherEndLng)
-        if (LineCrossDetector.linesCross() == true) {
-            return false;
+        /*
+        for (int i = 0; i <= latitudes[i]; i++) {
+            if (LineCrossDetector.linesCross(latitudes[i], longitudes[i], latitudes[i+1]) == true) {
+                return false;
+            }
         }
+        */
         return true;
     }
-
     /**
      * Marks a target captured by putting its index in the first available (-1) slot of the path array.
      * <p>
@@ -105,7 +103,12 @@ public class TargetVisitChecker {
      * @return the index in the path array that was updated, or -1 if the path array was full
      */
     public static int visitTarget(final int[] path, final int targetIndex) {
+        for (int i = 0; i < path.length; i++) {
+            if (path[i] == -1) {
+                path[i] = targetIndex;
+                return i;
+            }
+        }
         return -1;
     }
-
 }
