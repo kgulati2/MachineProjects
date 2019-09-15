@@ -1,5 +1,5 @@
 package edu.illinois.cs.cs125.fall2019.mp;
-
+import static edu.illinois.cs.cs125.fall2019.mp.LatLngUtils.distance;
 /**
  * Holds methods for managing a path of target claims.
  * <p>
@@ -43,7 +43,23 @@ public class TargetVisitChecker {
                                            final int range) {
         // HINT: To find the distance in meters between two locations, use a provided helper function:
         // LatLngUtils.distance(oneLatitude, oneLongitude, otherLatitude, otherLongitude)
-        return -1;
+        double dist;
+        int index = 0;
+        for (int i = 0; i < latitudes.length; i++) {
+            if (path[i] == -1) {
+                dist = distance(latitudes[i], longitudes[i], currentLatitude, currentLongitude);
+            } else {
+                dist = -1;
+            }
+            if ((dist <= range) && (dist != -1)) {
+                index = i;
+                break;
+            }
+        }
+        if (index == 0) {
+            index = -1;
+        }
+        return index;
     }
 
     /**
@@ -73,6 +89,9 @@ public class TargetVisitChecker {
         // HINT: To determine whether two lines cross, use a provided helper function:
         // LineCrossDetector.linesCross(oneStartLat, oneStartLng, oneEndLat, oneEndLng,
         //                              otherStartLat, otherStartLng, otherEndLat, otherEndLng)
+        if (LineCrossDetector.linesCross() == true) {
+            return false;
+        }
         return true;
     }
 
