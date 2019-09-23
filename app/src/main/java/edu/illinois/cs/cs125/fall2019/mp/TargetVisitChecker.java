@@ -50,7 +50,6 @@ public class TargetVisitChecker {
                     } else if (path.length - 1 == j) {
                         return i;
                     }
-
                 }
                 }
             }

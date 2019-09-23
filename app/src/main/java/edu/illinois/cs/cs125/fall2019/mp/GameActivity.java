@@ -178,6 +178,9 @@ public final class GameActivity extends AppCompatActivity {
 
         // Use the provided placeMarker function to add a marker at every target's location
         // HINT: onCreate initializes the relevant arrays (targetLats, targetLngs, path) for you
+        for (int i = 0; i < targetLats.length; i++) {
+            placeMarker(targetLats[i], targetLngs[i]);
+        }
     }
 
     /**
@@ -190,15 +193,24 @@ public final class GameActivity extends AppCompatActivity {
     @VisibleForTesting // Actually just visible for documentation - not called directly by test suites
     public void updateLocation(final double latitude, final double longitude) {
         // This function is responsible for updating the game state and map according to the user's movements
-
         // HINT: To operate on the game state, use the three methods you implemented in TargetVisitChecker
         // You can call them by prefixing their names with "TargetVisitChecker." e.g. TargetVisitChecker.visitTarget
         // The arrays to operate on are targetLats, targetLngs, and path
-
         // When the player gets within the PROXIMITY_THRESHOLD of a target, it should be captured and turned green
         // Sequential captures should create green connecting lines on the map
         // HINT: Use the provided changeMarkerColor and addLine functions to manipulate the map
         // HINT: Use the provided color constants near the top of this file as arguments to those functions
+        int pathVisit;
+        int visit = TargetVisitChecker.getTargetWithinRange(targetLats, targetLngs, path, latitude, longitude, PROXIMITY_THRESHOLD);
+        if (visit != -1 && TargetVisitChecker.checkSnakeRule(targetLats, targetLngs, path, visit)) {
+            pathVisit = TargetVisitChecker.visitTarget(path, visit);
+            if (pathVisit != -1) {
+                changeMarkerColor(targetLats[visit], targetLngs[visit], CAPTURED_MARKER_HUE);
+            }
+            if (pathVisit > 0 ) {
+                addLine(targetLats[path[pathVisit - 1]], targetLngs[path[pathVisit - 1]], targetLats[visit], targetLngs[visit], PLAYER_COLOR);
+            }
+        }
     }
 
     /**
